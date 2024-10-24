@@ -4,3 +4,7 @@
 
 - The extracted text will be present in extracted_text.txt
 
+- Provide the File path of extracted text file and run the prepare_data.py to enocde the text file with our random character level encoder of each characters.
+
+
+

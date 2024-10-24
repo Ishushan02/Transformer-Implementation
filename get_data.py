@@ -24,7 +24,7 @@ def extract_text_from_pdf(pdf_path):
 #     return text
 
 # Example usage
-pdf_file_path = '/Users/ishananand/Desktop/Transformers/Rithivik_Singh.pdf'  # Replace with your PDF file path
+pdf_file_path = '~/The~Book.pdf'  # Replace with your PDF file path
 extracted_text = extract_text_from_pdf(pdf_file_path)
 
 # Save the extracted text to a .txt file
