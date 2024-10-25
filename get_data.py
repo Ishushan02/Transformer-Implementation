@@ -9,7 +9,7 @@ def extract_text_from_pdf(pdf_path):
         for page in pdf.pages:
             text += page.extract_text() + '\n'
     
-    print(text[:1000])
+    # print(text[:1000])
     return text
 
 
