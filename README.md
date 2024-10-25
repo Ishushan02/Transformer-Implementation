@@ -6,5 +6,6 @@
 
 - Provide the File path of extracted text file and run the prepare_data.py to enocde the text file with our random character level encoder of each characters.
 
+- Just to test how the Model works, execute language_model.py to test a Bigram Model, it's inefficient but it's just to show up the sample of it's working.
 
-
+- Transformer Chunks are just simple mathematical operations which is showing how do we create the building block of Attention Model(Attention Unit) based on averaging the previous data.
