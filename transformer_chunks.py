@@ -100,10 +100,12 @@ wei = query @ key.transpose(-2, -1) # (B, T, 16) @ (B, 16, T) --> (B, T, T)
 tril = torch.tril(torch.ones((T, T)))
 
 wei = wei.masked_fill(tril==0, float('inf'))
-wei = Fn.softmax(wei, dim= -1)
+wei = Fn.softmax(wei, dim= -1) * head_size**-0.5
+# so in the paper Attention is all you need the softmax calculation is / sqrt(head_size)
 
 v = value(x)
 out = wei @ v # Dot Product of elements aggregated instead of raw x
+
 
 print(out.shape)
 
