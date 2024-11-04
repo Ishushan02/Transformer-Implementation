@@ -217,7 +217,7 @@ class EncoderBlock(nn.Module):
         # self.dropout = nn.Dropout(dropout)
 
         # we need 2 residual conections so creating them
-        self.residual_connection = nn.ModuleList([ResidualConnection[dropout] for _ in range(2)])
+        self.residual_connection = nn.ModuleList([ResidualConnection(dropout) for _ in range(2)])
 
     def forward(self, x, src_mask):
         # using first residual connection 
@@ -230,6 +230,9 @@ class EncoderBlock(nn.Module):
          
 
 class Encoder(nn.Module):
+    '''
+    Combining the EncoderBlocks Nx time
+    '''
 
     def __init__(self, layers:nn.ModuleList) :
         super(Encoder, self).__init__()
@@ -242,3 +245,44 @@ class Encoder(nn.Module):
          
         return self.norm(x)
          
+
+class DecoderBlock(nn.Module):
+    '''                                                         ( Cross Attention)
+    Decoder Block which contains selfAttention --> Norm --> (Outp from Encoder, and Norm) --> Norm --> Feed Forward --> Norm
+    This all are connected via 3 residual blocks(skip connection)
+    and this Decoder Block is replicated Nx number of times
+    '''
+
+    def __init__(self, self_attention_block: MultiHeadAttentionBlock, cross_attention_block:MultiHeadAttentionBlock,  feed_forward_block:FeedForwardBlock, dropout:float):
+        super(DecoderBlock, self).__init__()
+        self.self_attention_block = self_attention_block
+        self.cross_attention_block = cross_attention_block
+        self.feed_forward_block = feed_forward_block
+
+        # Here we have 3 of them
+        self.residual_connection = nn.ModuleList([ResidualConnection(dropout) for _ in range(3)])
+
+    def forward(self, x, encoder_output, src_mask, tar_mask): # src_mask is mask of Encoder and tar_mask is mask of Decoder
+        #   here decoder mask is used in the first block og multiHead attention
+        x = self.residual_connection[0](x, lambda x: self.self_attention_block(x, x, x, tar_mask))
+        #  here in cross attention query is coming from Decoder, the key and Value is coming from Encoder and Encoder mask is used
+        x = self.residual_connection[1](x, lambda x: self.cross_attention_block(x, encoder_output, encoder_output, src_mask ))
+        x = self.residual_connection[2](x, lambda x:self.feed_forward_block(x))
+
+        return x
+    
+
+class Decoder(nn.Module):
+    '''
+    Combining the Decoder Block Nx times
+    '''
+    def __init__(self, layers:nn.ModuleList) :
+        super(Decoder, self).__init__()
+        self.layers = layers
+        self.norm = LayerNormalization()
+
+    def forward(self, x, encoder_output, src_mask, tar_mask):
+        for layer in self.layers:
+            x = layer(x, encoder_output, src_mask, tar_mask)
+
+        return self.norm(x)
