@@ -13,3 +13,5 @@
 - To Execute the Complete Transformer Model for test purpose on the embeddings numbered from 1 -> 63 execute transformer.py
 
 - To Test it on pretrained Embedding exxecute training_using_BERT.py
+
+- Method 3 which is implemented is the detailed explanation of Transformer (with Self Attention and Multi Head Attention), try learning Transformers from it.
