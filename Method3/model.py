@@ -286,3 +286,18 @@ class Decoder(nn.Module):
             x = layer(x, encoder_output, src_mask, tar_mask)
 
         return self.norm(x)
+
+
+class ProjectionLayer(nn.Module):
+    '''
+    Adding the last layer of Decoder which has a Linear Layer and then followed by the softmax
+    It's Input will be seq_len, d_model (see notes the output of Multi Head Attention)
+    '''
+
+    def __init__(self, d_model:int, vocab_size:int):
+        super(ProjectionLayer, self).__init__()
+        self.projection = nn.Linear(d_model, vocab_size)
+
+    def forward(self, x):
+        # (N(batch), seq_len, d_model) --> (N(batch), seq_len, vocab_size)
+        return torch.log_softmax(self.projection(x), dim=-1) 
